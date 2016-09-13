@@ -5,8 +5,6 @@ public class Builder {
 	public static void main (String[] args) {
 		int[] A = new int[292930];
 		
-		//åäö--A..Za..zÅÄÖ
-		//ÅÄÖ = 123,125,106
 		//splitting test
 		String s = "Strategi 4096";	//let's say 'strategi' shows up at position 4096 in index file
 		String[] ss = s.split("\\s");
