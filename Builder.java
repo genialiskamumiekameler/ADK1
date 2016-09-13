@@ -46,6 +46,9 @@ public class Builder {
 				continue;
 			}
 			sb.insert(0, charVal);
+			if (charVal < 10){
+				sb.insert(0, 0);	//leading zeroes are important
+			}
 		}
 		String output = sb.toString();
 		return Integer.parseInt(output);
