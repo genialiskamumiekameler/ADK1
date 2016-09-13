@@ -13,9 +13,9 @@ public class Builder {
 		//end test
 		
 		//hash insertion test
-		int hashcode = hash(word);
-		if (A[hashcode] == 0){		// <---- likely source of errors
-			A[hashcode] = pos;
+		int hashCode = hash(word);
+		if (A[hashCode] == 0){		// <---- likely source of errors
+			A[hashCode] = pos;
 		}
 		//end test
 		
@@ -41,13 +41,14 @@ public class Builder {
 		int hashLength = 3;
 		for (int i = 0; i < hashLength; i++){
 			int charVal = getCharVal(c[i]);
-			if (charVal == -1){
+			if (charVal == -61){
+				//we hit a control char, skip please
 				hashLength++;
 				continue;
 			}
-			sb.insert(0, charVal);
+			sb.append(charVal);
 			if (charVal < 10){
-				sb.insert(0, 0);	//leading zeroes are important
+				sb.insert((sb.length()-1), 0);	//leading zeroes are important
 			}
 		}
 		String output = sb.toString();
@@ -63,7 +64,7 @@ public class Builder {
 			val = 0;
 		case -61:
 			//we hit a control char, skip please
-			return -1;
+			return val;
 		case -91:
 			//we found 'å'
 			val += (91+27);
