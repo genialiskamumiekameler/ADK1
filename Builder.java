@@ -5,28 +5,55 @@ public class Builder {
 	public static void main (String[] args) {
 		int[] A = new int[292930];
 		
-		//splitting test
-		String s = "Strategi 4096";	//let's say 'strategi' shows up at position 4096 in index file
-		String[] ss = s.split("\\s");
-		String word = ss[0];
-		int pos = Integer.parseInt(ss[1]);
-		//end test
+		//create indexfile via tokenizer.c
 		
-		//hash insertion test
-		int hashCode = hash(word);
-		if (A[hashCode] == 0){		// <---- likely source of errors
-			A[hashCode] = pos;
+		//read index file line by line
+		BufferedReader reader;
+		String input;
+		try{
+			File tokens = new File("/home/user/ADK1/fakeInput.txt");
+			reader = new BufferedReader(new FileReader(tokens));
+		} catch(FileNotFoundException e) {
+			System.out.println(e);
+			return;
 		}
-		//end test
+		try {
+			while ((input = reader.readLine()) != null){
+				//split line into word/number
+				String[] splitInput = input.split("\\s");
+				String word = splitInput[0];
+				int pos = Integer.parseInt(splitInput[1]);
+				
+				//insert to hashmap
+				int hashCode = hash(word);
+				if (A[hashCode] == 0) {
+					A[hashCode] = pos;
+				}
+			}
+		} catch(IOException e) {
+			System.out.println(e);
+			return;
+		}
 		
-		//hash search test
-		String searchTest = "stryka";
-		int searchHash = hash(searchTest);
-		System.out.println(A[searchHash]);
-		//end test
+		//save hashmap to file
+		FileOutputStream fileOutputStream;
+		try {
+			fileOutputStream = new FileOutputStream("/home/user/ADK1/hashfile");
+		} catch(FileNotFoundException e) {
+			System.out.println(e);
+			return;
+		}
+		try {
+			ObjectOutputStream outputStream = new ObjectOutputStream(fileOutputStream);
+			outputStream.writeObject(A);
+		} catch (IOException e) {
+			System.out.println(e);
+			return;
+		}
+
+		
 	}
 	
-	//TODO: conversion to lowercase
 	//TODO: maybe rewrite to use binary, for more efficient use of array indicies?
 	//takes a word and returns a lazyhash index based on the three first letters
 	public static int hash (String word){
