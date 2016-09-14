@@ -3,6 +3,11 @@ import java.util.*;
 
 //Builds a concordance as hashmap -> index -> corpus
 public class Builder {
+	
+	//edit these for correct file structure
+	static String hashFile = "/home/user/ADK1/hashfile";
+	static String indexFile = "/home/user/ADK1/fakeInput";
+	
 	public static void main (String[] args) {
 		int[] indexHash = new int[292930];
 		
@@ -13,7 +18,7 @@ public class Builder {
 		BufferedReader reader;
 		String input;
 		try{
-			File tokens = new File("/home/user/ADK1/fakeInput.txt");
+			File tokens = new File(indexFile);
 			reader = new BufferedReader(new FileReader(tokens));
 		} catch(FileNotFoundException e) {
 			System.out.println(e);
@@ -40,7 +45,7 @@ public class Builder {
 		//save hashmap to file
 		FileOutputStream fileOutputStream;
 		try {
-			fileOutputStream = new FileOutputStream("/home/user/ADK1/hashfile");
+			fileOutputStream = new FileOutputStream(hashFile);
 		} catch(FileNotFoundException e) {
 			System.out.println(e);
 			return;

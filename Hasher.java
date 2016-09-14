@@ -2,7 +2,7 @@ import java.io.*;
 import java.util.*;
 
 public class Hasher {
-//takes a word and returns a lazyhash index based on the three first letters
+	//takes a word and returns a lazyhash index based on the three first letters
 	public static int hash (String word){
 		byte[] c = new byte[0];
 		try{
