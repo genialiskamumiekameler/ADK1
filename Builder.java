@@ -9,38 +9,35 @@ public class Builder {
 	static String indexFile = "/var/tmp/tokenizerFile";
 	
 	public static void main (String[] args) {
-		int[] indexHash = new int[292930];
-		
-		//create indexfile via tokenizer.c
-		//--currently faked with file fakeInput.txt
+		long[] indexHash = new long[292930];
 		
 		//read index file line by line
-		BufferedReader reader;
-		String input;
+		RandomAccessFile reader;
 		try{
-			File tokens = new File(indexFile);
-			reader = new BufferedReader(new FileReader(tokens));
-		} catch(FileNotFoundException e) {
-			System.out.println(e);
-			return;
-		}
-		try {
-			while ((input = reader.readLine()) != null){
-				//split line into word/number
-				String[] splitInput = input.split("\\s");
-				String word = splitInput[0];
-				int pos = Integer.parseInt(splitInput[1]);
-				
-				//insert to hashmap
-				int hashCode = Hasher.hash(word);
-				if (indexHash[hashCode] == 0) {
-					indexHash[hashCode] = pos;
+			reader = new RandomAccessFile(indexFile, "r");
+			String input;
+			try {
+				while ((input = reader.readLine()) != null){
+					//split line into word/number
+					String[] splitInput = input.split("\\s");
+					String word = splitInput[0];
+					long pos = reader.getFilePointer();
+					
+					//insert to hashmap
+					int hashCode = Hasher.hash(word);
+					if (indexHash[hashCode] == 0) {
+						indexHash[hashCode] = pos;
+					}
 				}
+			} catch(IOException e2) {
+				System.out.println(e2);
+				return;
 			}
-		} catch(IOException e) {
+		}catch(FileNotFoundException e) {
 			System.out.println(e);
-			return;
+			System.exit(-1);
 		}
+		
 		
 		//save hashmap to file
 		FileOutputStream fileOutputStream;

@@ -38,7 +38,7 @@ public class Hasher {
 		if (val > 64 && val < 91) {
 			//handle A..Z as a..z
 			val += 32;
-		} else if (val == -123 || val == -124 || val == -106){
+		} else if (val == -59 || val == -60 || val == -42){
 			//handle ÅÄÖ as åäö
 			val += 32;
 		}
@@ -47,24 +47,31 @@ public class Hasher {
 			//this is a space
 			val = 0;
 			break;
-		case -61:
+		case 63:
 			//we hit a control char, skip please
-			return val;
-		case -91:
+			return 0;
+		case -27:
 			//we found 'å'
-			val += (91+27);
+			//val += (91+27);
+			val = 27;
 			break;
-		case -92:
+		case -28:
 			//we found 'ä'
-			val += (92+28);
+			//val += (92+28);
+			val = 28;
 			break;
-		case -74:
+		case -10:
 			//we found 'ö'
-			val += (74+29);
+			//val += (74+29);
+			val = 29;
 			break;
 		default:
 			//for all regular letters, subtract 97
 			val -= 96;
+			if (val < 0) { 
+				System.out.println("found a strange char");
+				System.out.println(val + 96);
+			}
 		}
 		return val;
 	}

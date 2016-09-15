@@ -7,7 +7,7 @@ public class Concordance {
 	static String korpusPath = "/info/adk13/labb1/korpus";
 	static String hashFile = "/var/tmp/hashFile";
 	static String indexPath = "/var/tmp/tokenizerFile";
-	static int[] hashIndex;
+	static long[] hashIndex;
 	
 	public static void main (String[] args) {
 		//load hashfile from disk
@@ -21,7 +21,7 @@ public class Concordance {
 		try {
 			ObjectInputStream inputStream = new ObjectInputStream(fileInputStream);
 			try{
-				hashIndex = (int[])inputStream.readObject();
+				hashIndex = (long[])inputStream.readObject();
 			} catch(ClassNotFoundException e) {
 				System.out.println(e);
 				return;
@@ -37,10 +37,10 @@ public class Concordance {
 			System.out.println("Ogiltig input. Du måste söka på ett ord.");
 			System.exit(-1);
 		}
-		if(!args[0].equals("[A-Za-zåäöÅÄÖ]+")){
+		/*if(!args[0].equals("[A-Za-zåäöÅÄÖ]+")){
 			System.out.println("Ogiltig input. Du måste söka på ett ord.");
 			System.exit(-1);
-		}
+		}*/
 
 		try{
 			String searchWord = args[0];
@@ -78,10 +78,10 @@ public class Concordance {
 	// Returns a list of all the positions that the search word occurs on
 	static private ArrayList<Integer> positionsFromIndex(String searchWord) throws FileNotFoundException, IOException{
 
-		int indexPos = 0;
+		long indexPos = 0;
 
 		int searchHash = Hasher.hash(searchWord);
-		System.out.println(hashIndex[searchHash]);
+		//System.out.println(hashIndex[searchHash]);
 
 		
 		//open index file and seek to hashFile[Hasher.hash(args[0])]
@@ -92,21 +92,20 @@ public class Concordance {
 		String searchHashLine = indexFile.readLine();
 		String[] splitLine = searchHashLine.split("\\s");
 
-
 		// If the first word does not match the word we are looking for, perform a binary search for exact word
 
 		// First position for binary search 
-		int searchHashIndex = hashIndex[searchHash]; 
+		long searchHashIndex = hashIndex[searchHash]; 
 
 		if(!splitLine[0].equals(searchWord)){
 			// Last position for binary search
 			int endHash = searchHash + 1;
-			int endHashIndex = hashIndex[endHash];
+			long endHashIndex = hashIndex[endHash];
 
 
 			// the actual binary search
 			while(endHashIndex - searchHashIndex > 1000){
-				int m = (searchHashIndex + endHashIndex) / 2;
+				long m = (searchHashIndex + endHashIndex) /2;
 				indexFile.seek((long)m);
 				String line = indexFile.readLine();
 				String[] sl = line.split("\\s"); 
@@ -122,29 +121,32 @@ public class Concordance {
 
 			// when the distance between the searchHashIndex and endHashIndex is less than 1000
 			indexFile.seek(searchHashIndex);
-			while(true){
+			boolean done = false;
+			while(!done){
+				indexPos = indexFile.getFilePointer(); //save position before reading line and advancing the pointer
 				String line = indexFile.readLine();
-				String[] sl = line.split("\\s"); 
-
-				// If we are on the word we are looking for, return its first position in index file/tokenizer file
-				if(sl[0].equals(searchWord)){
-					indexPos = Integer.parseInt(sl[1]);
-				}
+				
 				// If we reach the end of the file before finding a matching word, the word does not exist
 				if(line == null){
 					System.out.println("Ordet hittades inte.");
 					System.exit(-1);
 				}
+				
+				String[] sl = line.split("\\s"); 
+
+				// If we are on the word we are looking for, return its first position in index file/tokenizer file
+				if(sl[0].equals(searchWord)){
+					done = true;
+				}				
 			}
 		}	
 
 		// Now we should have the first position the word occurs on in the index file
 		// iterate over word instances and add to array
-		indexFile.seek((long)indexPos);
+		indexFile.seek(indexPos);
 		String line = indexFile.readLine();
 		String[] sl = line.split("\\s"); 
 		String currentWord = sl[0];
-
 		ArrayList<Integer> positions = new ArrayList<Integer>();
 		while(currentWord.equals(searchWord) && currentWord != null){
 			line = indexFile.readLine();
