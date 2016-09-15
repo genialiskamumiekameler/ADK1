@@ -13,6 +13,9 @@ public class Hasher {
 		
 		StringBuilder sb = new StringBuilder();
 		int hashLength = 3;
+		if (word.length() < hashLength) {
+			hashLength = word.length() - 1;		//handle short words
+		}
 		for (int i = 0; i < hashLength; i++){
 			int charVal = getCharVal(c[i]);
 			if (charVal == -61){
