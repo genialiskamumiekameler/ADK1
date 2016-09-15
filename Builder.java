@@ -5,8 +5,8 @@ import java.util.*;
 public class Builder {
 	
 	//edit these for correct file structure
-	static String hashFile = "/home/user/ADK1/hashfile";
-	static String indexFile = "/home/user/ADK1/fakeInput.txt";
+	static String hashFile = "/var/tmp/hashFile";
+	static String indexFile = "/var/tmp/tokenizerFile";
 	
 	public static void main (String[] args) {
 		int[] indexHash = new int[292930];
